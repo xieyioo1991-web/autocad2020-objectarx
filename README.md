@@ -1,6 +1,6 @@
 # AutoCAD 2020 ObjectARX Skill
 
-面向 **AutoCAD 2020 / Windows x64** 的 Codex 技能，提供原生 C++/ObjectARX 开发指导、SDK 资料导航和只读工程检查。
+面向 **AutoCAD 2020 / Windows x64** 的开发技能，提供原生 C++/ObjectARX 开发指导、SDK 资料导航和只读工程检查。
 
 围绕版本兼容、数据库对象生命周期和验证证据组织开发流程，帮助你在现有工程中实现命令、迁移事务逻辑、排查 ARX/CRX 加载问题，并明确每次修改实际验证到了哪里。
 
@@ -25,7 +25,7 @@
 | 加载诊断 | 检查架构、依赖、导出和宿主差异，分别处理 AutoCAD GUI 与 Core Console |
 | 验证证据检查 | 保留日志原始结果，对比当前插件哈希，区分编译、运行和业务验收 |
 
-技能内容采用 [Agent Skills](https://agentskills.io/) 的目录形式，包含 `SKILL.md`、按需参考资料和 PowerShell 辅助脚本；`agents/openai.yaml` 提供 Codex 的显示信息与默认提示词。
+技能内容采用 [Agent Skills](https://agentskills.io/) 的目录形式，包含 `SKILL.md`、按需参考资料和 PowerShell 辅助脚本。这些是项目主体，完整保留；Codex 专用显示配置、本地工作约定和对话附件不随仓库上传。
 
 ## 安装
 
@@ -90,9 +90,7 @@ npx skills add ./autocad2020-objectarx --skill autocad2020-objectarx -a codex -g
 ```text
 autocad2020-objectarx/
 ├── README.md                          # 安装、用法与资料导航
-├── SKILL.md                           # Codex 的技能入口
-├── agents/
-│   └── openai.yaml                    # 显示信息与默认提示词
+├── SKILL.md                           # 技能入口与开发规则
 ├── references/
 │   ├── sources.md                     # 来源、版本与 SDK 主题索引
 │   ├── build-and-loading.md           # 工具链、构建与加载诊断

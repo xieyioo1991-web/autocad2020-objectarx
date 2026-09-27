@@ -1,7 +1,0 @@
-interface:
-  display_name: "AutoCAD 2020 ObjectARX"
-  short_description: "面向 AutoCAD 2020 的原生 C++ 开发、版本核对与验证记录检查"
-  default_prompt: "使用 $autocad2020-objectarx 检查当前工程配置和已有验证记录，说明下一步需要验证的项目。"
-
-policy:
-  allow_implicit_invocation: true
