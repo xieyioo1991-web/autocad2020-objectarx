@@ -154,6 +154,7 @@ autocad2020-objectarx/
 │   ├── sources.md                     # 来源、版本与 SDK 主题索引
 │   ├── build-and-loading.md           # 工具链、构建与加载诊断
 │   ├── database-lifecycle.md          # 对象所有权、事务与迁移
+│   ├── native-drawing-patterns.md     # Manifest 出图、跨图克隆、Hatch 与回读
 │   └── verification.md                # 验证层级与证据判读
 └── scripts/
     └── Inspect-Arx2020.ps1             # 只读检查器，输出 JSON
@@ -165,6 +166,7 @@ autocad2020-objectarx/
 | [来源与 SDK 索引](references/sources.md) | 命令、实体、图层、XData、事务相关头文件与示例，以及 CHM 入口 |
 | [构建与加载](references/build-and-loading.md) | 版本、编译配置、模块依赖和加载排查 |
 | [数据库生命周期](references/database-lifecycle.md) | 对象所有权、释放时机、事务和 C# 迁移 |
+| [原生出图模式](references/native-drawing-patterns.md) | Manifest/JSON 出图、资源模板、跨图克隆、Hatch 和实体回读 |
 | [验证与证据](references/verification.md) | 测试安排、日志判读和结果报告 |
 | [ObjectARX 2020 Release Notes](https://help.autodesk.com/cloudhelp/2020/ENU/OARX-Readme/files/GUID-4DA730AB-7A47-4663-838B-21E71438D6C8.htm) | Autodesk 官方版本说明 |
 

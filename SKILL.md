@@ -18,6 +18,7 @@ description: "Use when developing, reviewing, migrating, building, or diagnosing
 | 查接口、命令入口、图层/实体/XData 示例 | [来源与本地检索索引](references/sources.md) |
 | 环境、工程、编译、加载失败 | [构建与加载](references/build-and-loading.md) |
 | 数据库对象、事务、C# 迁移、失败回滚 | [对象生命周期](references/database-lifecycle.md) |
+| Manifest/JSON 到 DWG、跨图克隆、资源模板、Hatch、实体回读 | [原生出图模式](references/native-drawing-patterns.md) |
 | 设计测试、解释日志、判断完成范围 | [验证与证据](references/verification.md) |
 
 ## 必须保持的判断
@@ -28,6 +29,9 @@ description: "Use when developing, reviewing, migrating, building, or diagnosing
 - `.arx` 改名 `.crx` 不改变依赖或接口。Core Console 和 AutoCAD GUI 分别验证；无 UI 探针的历史成功不覆盖 UI 插件。
 - 配置符合、编译成功、历史记录通过、本次运行通过、业务验收是不同结论。每个结论附对应范围和证据，哈希不符的旧记录不算当前二进制通过。
 - DWG 只按项目规则使用测试副本。不要结束用户的 CAD、覆盖占用中的模块或把输出写入受保护源目录。测试工具自身也先检查输出路径。
+- JSON/Manifest 到 DWG 时，先冻结版本化契约，再让 ARX 做语法/语义校验；ARX 不应猜测上游业务规则或依赖旧的绝对路径、句柄和隐含坐标。
+- 图框、尺寸、轴号块、带属性块和专业标注优先从经过哈希校验的原生模板对象克隆，再只修改契约允许的几何或文字字段；克隆数量正确不等于对象关系、属性坐标和显示样式正确。
+- Hatch、线型、标注样式等宿主对象要在目标数据库内解析并回读；不要把当前工作数据库中的 `ObjectId` 写入独立数据库，也不要用一次 Core Console 统计替代实体级或 GUI 验证。
 
 ## 只读检查
 
@@ -54,6 +58,8 @@ $argsForInspection = @{
 ## 修改与交付
 
 遵循现有工程结构实现最小改动，核对 SDK 返回值和失败路径，再按任务执行相关验证。只有文档或检查任务时，不附带运行 CAD。报告：实际改动、查证来源、此次执行的验证、历史证据及剩余未知项。
+
+涉及从结构数据或其他 JSON 契约生成 DWG 时，按需读取[原生出图模式](references/native-drawing-patterns.md)，其中的资源来源、跨图克隆、Hatch 和回读规则属于 ObjectARX 2020 的高风险路径。
 
 可配合 `cpp-coding-standards` 做一般 C++ 设计，配合 `cpp-testing` 做适当单元测试；它们不是必需依赖。工具链、ObjectARX 所有权和宿主约束优先用于裁剪通用建议。不要直接复制 C++20 示例、默认删除器或不适用 v141 的测试工具参数。
 
