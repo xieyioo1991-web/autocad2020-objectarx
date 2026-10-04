@@ -43,6 +43,10 @@
 | XData / `ADDXDATA`、`PRINTX` | `samples/database/xdata_dg/readme.txt`，再定位该目录源码 | 首版仅作为入口；实现时再查注册应用名与 resbuf 所有权 |
 | 事务、新对象纳管、嵌套回滚 | `samples/entity/polysamp/transact.cpp` | 按当前任务阅读完整相关函数 |
 | UI 与对象模块拆分 | `samples/entity/polysamp/` | `polyui.vcxproj` 含遗留 Win32 配置，README 有旧库名，不能直接继承 |
+| 跨库克隆 / `wblockCloneObjects`、`AcDbIdMapping`、`DuplicateRecordCloning` | `inc/dbmain.h`、`inc/dbidmap.h`、`inc/acdb.h` | 核对目标 owner、ID 映射与同名记录处理；`kDrcIgnore` 保留目标已有定义 |
+| 坐标 / `acedTrans`、`getPointAt`、`blockTransform` | `inc/acedads.h`、`inc/dbpl.h`、`inc/dbents.h`、`inc/gemat3d.h` | 区分点与向量、二维与三维重载，以及 UCS/OCS/WCS 和累计块变换 |
+| 填充平面 / `getLoopAt`、`normal`、`elevation` | `inc/dbhatch.h` | 环数据坐标与平面信息结合查证，不直接视为 WCS 顶点 |
+| 范围和可见性 / `getGeomExtents`、`visibility`、`isInvisible`、`isOff`、`isFrozen` | `inc/dbmain.h`、`inc/dbents.h`、`inc/dbsymtb.h` | 核对错误状态、属性与图层标志；嵌套可见性仍需结合实例路径和宿主验证 |
 
 示例查询（`$sdkRoot` 已定位）：
 
@@ -59,7 +63,7 @@ rg -n 'addCommand|removeGroup|appendAcDbEntity' (Join-Path $sdkRoot 'samples/dat
 | 文件 | 内容入口 / 建议搜索词 | 首版状态 |
 |---|---|---|
 | `docs/arxdev.chm` | ObjectARX Developer's Guide；transactions、opening and closing、commands、database | 文件存在；未建立全文索引 |
-| `docs/arxref.chm` | Reference；`AcDbObject`、`AcDbTransactionManager`、`AcTransaction` | 文件存在；按类名查阅 |
+| `docs/arxref.chm` | Reference；`AcDbObject`、`AcDbTransactionManager`、`AcTransaction`；坐标与克隆另查 `AcDbPolyline::getPointAt`、`acedTrans`、`AcDbBlockReference::blockTransform`、`AcDbDatabase::wblockCloneObjects` | 文件存在；按类名和方法查阅，头文件签名不等于语义正文已读 |
 | `docs/readarx.chm` | Readme / Requirements / Release Notes | 文件存在；支持范围另核对官方在线 2020 说明 |
 
 首版尝试系统 `hh.exe -decompile`，未生成可搜索内容。因此这里是**文件与主题索引**，不是已解析 CHM 正文。需要尚未查证的语义时，通过可用 CHM 阅读方式查看具体条目，或在工作区缓存合法取得的 2020 文档内容；若仍不可读，明确缺口，用头文件和示例限定推断范围。缓存和摘录不写回 SDK 或原项目。不要将整套 SDK/CHM/示例复制进技能分发包。

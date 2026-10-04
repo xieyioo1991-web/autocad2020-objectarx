@@ -1,11 +1,27 @@
 # AutoCAD 2020 ObjectARX 开发技能
 
+## 2026-10-04 更新
+
+新增[图纸兼容与交付一致性](references/drawing-compatibility.md)，整理了结构大样与 IFC 出图项目中四类容易在换图、重复导入或换电脑时暴露的问题：
+
+| 问题 | 本次补充 |
+| --- | --- |
+| 同名文字样式、尺寸样式冲突 | 比较实际定义，按用途选择复用或私有克隆，并回读文字、DIMSTYLE 和箭头依赖 |
+| 坐标转换和重复位移 | 区分 UCS、OCS、WCS，检查嵌套块累计变换及反向法向下的圆弧方向 |
+| 源码、ARX、JSON 与底图版本混用 | 建立配套发布清单，保持指纹文件字节，验证独立目录中的交付包 |
+| 隐藏对象和空文字参与计算 | 递归判断有效图层与属性可见性，区分无几何范围和实际读取错误 |
+
+每项都附处理条件和最小验证场景。技能入口增加了对应的读取条件；原生出图参考也明确了当前 DWG 导入与独立成果数据库的区别，并补充尺寸文字位置按合同调整的边界。这次更新的是开发指导，具体插件仍需按项目输入和验收口径验证。
+
+## 技能说明
+
 供 Codex 使用的 AutoCAD 2020 原生 C++ / ObjectARX 开发技能，包含开发规则、SDK 资料索引和只读工程检查脚本。
 
 它用于实现和审查插件命令、迁移 C# 数据库操作、排查 ARX/CRX 加载问题，以及核对工程配置和测试记录。处理结构出图等业务插件时，命令、绘图空间、比例、图元格式和配筋规则由具体项目定义，迁移过程中应保持这些约定。
 
 ## 目录
 
+- [本次更新](#2026-10-04-更新)
 - [安装与使用](#安装与使用)
 - [基本工作流程](#基本工作流程)
 - [适用任务与目标环境](#适用任务与目标环境)
@@ -75,6 +91,8 @@ CLI 使用已有的仓库身份验证。技能安装完成后，AutoCAD、Object
 按任务查阅构建、数据库生命周期或验证资料。关键 API 以工程实际使用的 2020 SDK 头文件和示例为准。
 
 对象管理需区分未入库、已入库和事务管理三种状态，明确由谁接管、关闭或释放。迁移事务代码时，应核对原生事务管理器接口，不能逐字套用 .NET 的调用方式。
+
+导入已有 DWG、处理嵌套块或跨电脑交付时，查阅[图纸兼容与交付一致性](references/drawing-compatibility.md)。同名样式、坐标转换、有效可见性和资源版本需要结合实际图纸检查。
 
 ### 4. 按改动范围验证
 
@@ -155,6 +173,7 @@ autocad2020-objectarx/
 │   ├── build-and-loading.md           # 工具链、构建与加载诊断
 │   ├── database-lifecycle.md          # 对象所有权、事务与迁移
 │   ├── native-drawing-patterns.md     # Manifest 出图、跨图克隆、Hatch 与回读
+│   ├── drawing-compatibility.md       # 样式冲突、坐标、可见性与交付配套
 │   └── verification.md                # 验证层级与证据判读
 └── scripts/
     └── Inspect-Arx2020.ps1             # 只读检查器，输出 JSON
@@ -167,6 +186,7 @@ autocad2020-objectarx/
 | [构建与加载](references/build-and-loading.md) | 版本、编译配置、模块依赖和加载排查 |
 | [数据库生命周期](references/database-lifecycle.md) | 对象所有权、释放时机、事务和 C# 迁移 |
 | [原生出图模式](references/native-drawing-patterns.md) | Manifest/JSON 出图、资源模板、跨图克隆、Hatch 和实体回读 |
+| [图纸兼容与交付一致性](references/drawing-compatibility.md) | 同名样式、坐标转换、隐藏对象、空文字，以及版本配套和跨机验证 |
 | [验证与证据](references/verification.md) | 测试安排、日志判读和结果报告 |
 | [ObjectARX 2020 Release Notes](https://help.autodesk.com/cloudhelp/2020/ENU/OARX-Readme/files/GUID-4DA730AB-7A47-4663-838B-21E71438D6C8.htm) | Autodesk 官方版本说明 |
 

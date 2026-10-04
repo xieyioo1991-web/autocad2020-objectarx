@@ -19,6 +19,7 @@ description: "Use when developing, reviewing, migrating, building, or diagnosing
 | 环境、工程、编译、加载失败 | [构建与加载](references/build-and-loading.md) |
 | 数据库对象、事务、C# 迁移、失败回滚 | [对象生命周期](references/database-lifecycle.md) |
 | Manifest/JSON 到 DWG、跨图克隆、资源模板、Hatch、实体回读 | [原生出图模式](references/native-drawing-patterns.md) |
+| 已有 DWG 样式冲突、UCS/OCS/WCS、嵌套块偏移、隐藏对象、空文字、换机或版本混用 | [图纸兼容与交付一致性](references/drawing-compatibility.md) |
 | 设计测试、解释日志、判断完成范围 | [验证与证据](references/verification.md) |
 
 ## 必须保持的判断
@@ -31,6 +32,7 @@ description: "Use when developing, reviewing, migrating, building, or diagnosing
 - DWG 只按项目规则使用测试副本。不要结束用户的 CAD、覆盖占用中的模块或把输出写入受保护源目录。测试工具自身也先检查输出路径。
 - JSON/Manifest 到 DWG 时，先冻结版本化契约，再让 ARX 做语法/语义校验；ARX 不应猜测上游业务规则或依赖旧的绝对路径、句柄和隐含坐标。
 - 图框、尺寸、轴号块、带属性块和专业标注优先从经过哈希校验的原生模板对象克隆，再只修改契约允许的几何或文字字段；克隆数量正确不等于对象关系、属性坐标和显示样式正确。
+- 导入已有 DWG 时，检查同名样式的实际定义、坐标转换链及块内有效可见性；换机或更新资源时，核对源码、ARX、JSON、底图和合同的配套关系。具体处理与验证场景见[图纸兼容与交付一致性](references/drawing-compatibility.md)。
 - Hatch、线型、标注样式等宿主对象要在目标数据库内解析并回读；不要把当前工作数据库中的 `ObjectId` 写入独立数据库，也不要用一次 Core Console 统计替代实体级或 GUI 验证。
 
 ## 只读检查
