@@ -1,5 +1,11 @@
 # AutoCAD 2020 ObjectARX 开发技能
 
+## 2026-10-26 更新
+
+新增[开发效率与复用实践](references/development-efficiency.md)，从 IFC 出图与结构大样两个项目提炼 12 项按推荐等级排序的经验，覆盖局部验证、规则边界、对象所有权、构建身份、手测隔离、可信宿主运行、分析复用、导出回滚和公共服务边界。
+
+技能入口增加按需阅读与迭代原则；构建参考补充输入稳定性和候选身份，验证参考补充证据复用、唯一完成标记、异常归属及长列表回显故障。优先形成小型模板和基础封装，业务数值与发布约定保留在使用项目中。本次提供开发指导，没有新增构建、测试或发布执行器，也不表示业务插件已重新验收。
+
 ## 2026-10-04 更新
 
 新增[图纸兼容与交付一致性](references/drawing-compatibility.md)，整理了结构大样与 IFC 出图项目中四类容易在换图、重复导入或换电脑时暴露的问题：
@@ -21,7 +27,7 @@
 
 ## 目录
 
-- [本次更新](#2026-10-04-更新)
+- [本次更新](#2026-10-26-更新)
 - [安装与使用](#安装与使用)
 - [基本工作流程](#基本工作流程)
 - [适用任务与目标环境](#适用任务与目标环境)
@@ -100,6 +106,8 @@ CLI 使用已有的仓库身份验证。技能安装完成后，AutoCAD、Object
 
 文档和只读检查任务不启动 CAD。需要宿主测试时，使用项目允许的 DWG 副本和独立运行目录。
 
+减少重复构建/验证、建立交付流程或优化调用链时，按需查阅[开发效率与复用实践](references/development-efficiency.md)。同一完整输入身份下复用有效证据，变化后重新判断影响范围；最终候选按项目要求完成发布检查。
+
 ## 适用任务与目标环境
 
 | 任务 | 主要处理内容 |
@@ -174,6 +182,7 @@ autocad2020-objectarx/
 │   ├── database-lifecycle.md          # 对象所有权、事务与迁移
 │   ├── native-drawing-patterns.md     # Manifest 出图、跨图克隆、Hatch 与回读
 │   ├── drawing-compatibility.md       # 样式冲突、坐标、可见性与交付配套
+│   ├── development-efficiency.md      # 推荐顺序、复用资产、分析与交付边界
 │   └── verification.md                # 验证层级与证据判读
 └── scripts/
     └── Inspect-Arx2020.ps1             # 只读检查器，输出 JSON
@@ -187,6 +196,7 @@ autocad2020-objectarx/
 | [数据库生命周期](references/database-lifecycle.md) | 对象所有权、释放时机、事务和 C# 迁移 |
 | [原生出图模式](references/native-drawing-patterns.md) | Manifest/JSON 出图、资源模板、跨图克隆、Hatch 和实体回读 |
 | [图纸兼容与交付一致性](references/drawing-compatibility.md) | 同名样式、坐标转换、隐藏对象、空文字，以及版本配套和跨机验证 |
+| [开发效率与复用实践](references/development-efficiency.md) | 按推荐等级选取开发机制、公共封装、分析复用和交付流程 |
 | [验证与证据](references/verification.md) | 测试安排、日志判读和结果报告 |
 | [ObjectARX 2020 Release Notes](https://help.autodesk.com/cloudhelp/2020/ENU/OARX-Readme/files/GUID-4DA730AB-7A47-4663-838B-21E71438D6C8.htm) | Autodesk 官方版本说明 |
 

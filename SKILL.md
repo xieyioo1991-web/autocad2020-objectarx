@@ -20,6 +20,7 @@ description: "Use when developing, reviewing, migrating, building, or diagnosing
 | 数据库对象、事务、C# 迁移、失败回滚 | [对象生命周期](references/database-lifecycle.md) |
 | Manifest/JSON 到 DWG、跨图克隆、资源模板、Hatch、实体回读 | [原生出图模式](references/native-drawing-patterns.md) |
 | 已有 DWG 样式冲突、UCS/OCS/WCS、嵌套块偏移、隐藏对象、空文字、换机或版本混用 | [图纸兼容与交付一致性](references/drawing-compatibility.md) |
+| 减少重复验证、建立开发/交付流程、提取公共封装或优化重复分析 | [开发效率与复用实践](references/development-efficiency.md)，按推荐顺序选取相关机制 |
 | 设计测试、解释日志、判断完成范围 | [验证与证据](references/verification.md) |
 
 ## 必须保持的判断
@@ -61,8 +62,12 @@ $argsForInspection = @{
 
 遵循现有工程结构实现最小改动，核对 SDK 返回值和失败路径，再按任务执行相关验证。只有文档或检查任务时，不附带运行 CAD。报告：实际改动、查证来源、此次执行的验证、历史证据及剩余未知项。
 
+开发迭代先明确本次改变、保留行为和验收依据，按影响范围验证；最终发布执行项目规定的完整检查。同一源码、资源、合同、夹具、测试程序、工具链及二进制对应的有效结果可以复用，输入变化后重新判断受影响范围，不为改写报告重复运行。具体分层和宿主完成证据见[验证与证据](references/verification.md)。
+
+提速先测阶段耗时和实际调用次数，优先消除重复读取、分析和生成。仅在同次同步只读操作内共享不可变结果；跨编辑、点选、对话框或提交需要重新校核来源及资源。工程化复用优先采用小型模板和明确所有权的封装，保持项目业务数值与类型差异；不要自动引入另一项目的全部发布门禁或历史目录。详见[开发效率与复用实践](references/development-efficiency.md)。
+
 涉及从结构数据或其他 JSON 契约生成 DWG 时，按需读取[原生出图模式](references/native-drawing-patterns.md)，其中的资源来源、跨图克隆、Hatch 和回读规则属于 ObjectARX 2020 的高风险路径。
 
 可配合 `cpp-coding-standards` 做一般 C++ 设计，配合 `cpp-testing` 做适当单元测试；它们不是必需依赖。工具链、ObjectARX 所有权和宿主约束优先用于裁剪通用建议。不要直接复制 C++20 示例、默认删除器或不适用 v141 的测试工具参数。
 
-首版提供开发指导、资料索引和只读检查。MFC/Jig/Reactors、自定义实体、Object Enabler、GUI 自动化与安装器需另行查证和验证；技能安装不代表插件已经迁移或通过运行验收。
+本技能提供开发指导、资料索引、复用实践和只读检查。MFC/Jig/Reactors、自定义实体、Object Enabler、GUI 自动化与安装器需另行查证和验证；技能安装不代表插件已经迁移或通过运行验收。
