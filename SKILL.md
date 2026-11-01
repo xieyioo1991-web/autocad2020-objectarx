@@ -22,6 +22,7 @@ description: "Use when developing, reviewing, migrating, building, or diagnosing
 | 已有 DWG 样式冲突、UCS/OCS/WCS、嵌套块偏移、隐藏对象、空文字、换机或版本混用 | [图纸兼容与交付一致性](references/drawing-compatibility.md) |
 | 减少重复验证、建立开发/交付流程、提取公共封装或优化重复分析 | [开发效率与复用实践](references/development-efficiency.md)，按推荐顺序选取相关机制 |
 | 设计测试、解释日志、判断完成范围 | [验证与证据](references/verification.md) |
+| 整类几何修复、首次克隆校核、跨保存/复制复现、目标缺项诊断、证据保留 | [可复现工作流](references/reproducible-workflows.md)，按问题选择一项；另列开发中候选的验证边界 |
 
 ## 必须保持的判断
 
