@@ -1,74 +1,58 @@
 ---
 name: autocad2020-objectarx
-description: "Use when developing, reviewing, migrating, building, or diagnosing native C++/ObjectARX plugins specifically for AutoCAD 2020 on Windows x64, including ARX/CRX loading, AcDb object lifetime, transactions, and validation evidence. 适用于 AutoCAD 2020 原生插件开发与 C# 到 ObjectARX 的迁移。不适用于普通绘图、纯 C#/.NET、Python COM 或其他 AutoCAD 版本。"
+description: "Use when developing, reviewing, migrating, building, or diagnosing native C++/ObjectARX plugins specifically for AutoCAD 2020 on Windows x64, including ARX/CRX loading, AcDb object lifetime, transactions, and proportionate validation. 适用于 AutoCAD 2020 原生插件开发与 C# 到 ObjectARX 的迁移。不适用于普通绘图、纯 C#/.NET、Python COM 或其他 AutoCAD 版本。"
 ---
 
 # AutoCAD 2020 ObjectARX
 
-面向 Windows x64 的版本限定开发指南。先核对项目事实，再修改和验证；使用用户的语言汇报。
+帮助完成 Windows x64 原生插件的实际功能、故障修复和必要验证。使用用户的语言汇报；阅读和执行范围随本次任务决定。
 
-## 开始工作
+## 开发范围与完成边界
 
-1. 读取工作区 `AGENTS.md` 及相关目录规则，确定可写目录、冻结基线、DWG 副本规则和本次任务。迁移时从项目规则读取命令、出图、比例与数据格式；不自行引入自定义实体或重构数据模型。
-2. 从工程属性、已有说明和工具安装目录定位 SDK、编译器、宿主与插件；不要凭文件夹名认定版本。缺少资料时标为未知，继续可独立完成的工作。
-3. 按任务读取下表中的参考；关键 API 要在**实际使用的 2020 SDK** 中查证。网上新版教程只提供检索线索，不作为 2020 签名或兼容性的证明。
+- 先读适用的 `AGENTS.md` 和本次相关规则，复用同轮已知信息。用户明确要求优先于技能建议；推测不能记成用户确认。按已有授权完成正常实现和修复，不为普通实现选择反复询问。
+- 增加检查、拒绝条件、确认步骤或工作范围前，判断它是否来自明确需求或完成本次功能的实际依赖。假设风险、旧测试、历史做法和技能案例本身不构成新增要求的依据；无需为这项判断另建审批表或报告。
+- 分开产品运行、开发验证和正式发布。开发用的副本对照、故障注入、完整回读、覆盖统计不能自动进入产品默认链；发布门槛不能自动前移到局部开发或手测。
+- 先定位目标与用途，再读取必要资料。未读懂、未适配、未关联和源数据确实缺失分别处理；补齐程序能力，不用任意数量、样本特征、额外凭据或用户白名单代替实现。
+- 修复应覆盖同一机制实际影响的入口；测试发现的范围外新能力另记待办，不变成当前交付前提。旧拒绝预期与需求冲突时核对来源并修正，既不盲目维护旧门槛，也不靠删检查掩盖缺陷。
+- 按影响验证并复用有效结果。约定结果完成、相关必要检查通过且无影响本次结果的未决问题时交付；不因还能增加测试、重写报告或补做审查而延长任务。具体方法见[开发效率](references/development-efficiency.md)和[验证与证据](references/verification.md)。
 
-| 任务 | 读取 |
-|---|---|
-| 查接口、命令入口、图层/实体/XData 示例 | [来源与本地检索索引](references/sources.md) |
-| 环境、工程、编译、加载失败 | [构建与加载](references/build-and-loading.md) |
-| 数据库对象、事务、C# 迁移、失败回滚 | [对象生命周期](references/database-lifecycle.md) |
-| Manifest/JSON 到 DWG、跨图克隆、资源模板、Hatch、实体回读 | [原生出图模式](references/native-drawing-patterns.md) |
-| 已有 DWG 样式冲突、UCS/OCS/WCS、嵌套块偏移、隐藏对象、空文字、换机或版本混用 | [图纸兼容与交付一致性](references/drawing-compatibility.md) |
-| 减少重复验证、建立开发/交付流程、提取公共封装或优化重复分析 | [开发效率与复用实践](references/development-efficiency.md)，按推荐顺序选取相关机制 |
-| 设计测试、解释日志、判断完成范围 | [验证与证据](references/verification.md) |
-| 整类几何修复、首次克隆校核、跨保存/复制复现、目标缺项诊断、证据保留 | [可复现工作流](references/reproducible-workflows.md)，按问题选择一项；另列开发中候选的验证边界 |
+## 按任务查阅
 
-## 必须保持的判断
+从已有工程配置定位 SDK、编译器和宿主；只在相关配置变化或故障需要时重新核查。关键接口以实际使用的 2020 SDK 为准，不凭目录名或新版示例猜签名。缺少资料时继续可独立完成的工作，只询问真正影响下一步的信息。
 
-- 目标为 AutoCAD 2020 / R23.1 / x64。工具链以 VS2017/v141 为基线；官方补丁范围与本机有限实测分开记录。保留已确认配置；不因通用 C++ 示例自动升级 C++20/23、SDK 或宿主。
-- 数据库对象区分未入库、已入库、事务管理三种状态。默认 `unique_ptr` 删除器不适用于数据库已管理对象。谁打开、谁接管、失败时谁清理要明确，避免重复关闭或删除。
-- 原生事务接口依据 `dbtrans.h`：`startTransaction/endTransaction/abortTransaction/addNewlyCreatedDBRObject` 在事务管理器上；不要把 .NET 的 `Transaction.AddNewlyCreatedDBObject` 机械翻译到 `AcTransaction`。
-- `.arx` 改名 `.crx` 不改变依赖或接口。Core Console 和 AutoCAD GUI 分别验证；无 UI 探针的历史成功不覆盖 UI 插件。
-- 配置符合、编译成功、历史记录通过、本次运行通过、业务验收是不同结论。每个结论附对应范围和证据，哈希不符的旧记录不算当前二进制通过。
-- DWG 只按项目规则使用测试副本。不要结束用户的 CAD、覆盖占用中的模块或把输出写入受保护源目录。测试工具自身也先检查输出路径。
-- JSON/Manifest 到 DWG 时，先冻结版本化契约，再让 ARX 做语法/语义校验；ARX 不应猜测上游业务规则或依赖旧的绝对路径、句柄和隐含坐标。
-- 图框、尺寸、轴号块、带属性块和专业标注优先从经过哈希校验的原生模板对象克隆，再只修改契约允许的几何或文字字段；克隆数量正确不等于对象关系、属性坐标和显示样式正确。
-- 导入已有 DWG 时，检查同名样式的实际定义、坐标转换链及块内有效可见性；换机或更新资源时，核对源码、ARX、JSON、底图和合同的配套关系。具体处理与验证场景见[图纸兼容与交付一致性](references/drawing-compatibility.md)。
-- Hatch、线型、标注样式等宿主对象要在目标数据库内解析并回读；不要把当前工作数据库中的 `ObjectId` 写入独立数据库，也不要用一次 Core Console 统计替代实体级或 GUI 验证。
+| 任务 | 参考 |
+| --- | --- |
+| 查接口、命令、图层、实体或 XData | [来源与本地检索索引](references/sources.md) |
+| 环境、构建或加载失败 | [构建与加载](references/build-and-loading.md) |
+| 对象管理、事务、C# 迁移、失败回滚 | [数据库生命周期](references/database-lifecycle.md) |
+| Manifest/JSON 出图、跨库克隆、资源、Hatch | [原生出图模式](references/native-drawing-patterns.md) |
+| 样式冲突、坐标、隐藏对象、换机或版本混用 | [图纸兼容与交付一致性](references/drawing-compatibility.md) |
+| 过度验证、范围扩大、重复工作、性能或交付流程 | [开发效率与复用实践](references/development-efficiency.md) |
+| 选择测试、判读日志、复用结果、判断完成范围 | [验证与证据](references/verification.md) |
+| 等价几何、保存/复制、首次克隆、目标诊断、证据维护 | [可复现工作流](references/reproducible-workflows.md)，只选相关案例 |
 
-## 只读检查
+## ObjectARX 技术边界
 
-可用 [Inspect-Arx2020.ps1](scripts/Inspect-Arx2020.ps1) 读取已发现的路径：
+- 目标为 AutoCAD 2020 / R23.1 / x64，工具链以 VS2017/v141 为基线。保留已确认配置，区分官方支持与本机实测，不顺带升级 SDK、宿主或语言标准。
+- 区分未入库、已入库、事务管理三种对象状态。默认 `unique_ptr` 删除器不适用于数据库已管理对象；明确打开、接管、关闭和失败清理责任。
+- 原生事务接口依据 `dbtrans.h`：`startTransaction/endTransaction/abortTransaction/addNewlyCreatedDBRObject` 在事务管理器上，不机械翻译 .NET 的事务方法。
+- 实体的图层、样式和关联 ID 来自正确的目标数据库；跨库通过映射重新取得 ID。事务结束后不复用对象指针，嵌套变换不重复应用。
+- 几何、材料、尺寸和配筋值来自实际输入及已确认规则，不用包围盒替代真实造型，不用猜值补缺。按输出用途保留原生模板、样式、属性和 Hatch 关系。
+- 按项目规则使用 DWG 副本，保护用户源图与手改结果；不结束用户 CAD，不覆盖正在使用的模块。数据库写入和事务错误按真实影响处理，辅助阶段失败不自动撤回可靠主体。
+- `.arx` 改名 `.crx` 不改变依赖或接口。Core Console 同源宿主通过不证明生产 GUI ARX 已加载；编译、实际命令执行和 GUI 验收分别表述。
+
+## 可选只读检查
+
+需要核对已发现的路径或旧记录时，可用 [Inspect-Arx2020.ps1](scripts/Inspect-Arx2020.ps1)：
 
 ```powershell
-# 从工作区执行；$skillRoot、$sdkRoot 等须来自已定位的真实路径。
-$argsForInspection = @{
-    Workspace = (Get-Location).Path
-    ProjectFile = $projectPath
-    SdkRoot = $sdkRoot
-    BuildToolsRoot = $buildToolsRoot
-    AutoCadRoot = $autoCadRoot
-    BinaryPath = $pluginPath
-    EvidencePaths = @($evidencePath)
-    Configuration = 'Release'
-    Platform = 'x64'
-}
-& (Join-Path $skillRoot 'scripts/Inspect-Arx2020.ps1') @argsForInspection
+& (Join-Path $skillRoot 'scripts/Inspect-Arx2020.ps1') -Workspace $projectRoot -ProjectFile $projectFile -BinaryPath $binaryPath
 ```
 
-除 `Workspace` 外均可省略；相对路径相对于工作区。脚本只输出 JSON，不构建、启动 CAD、安装软件、执行 MSBuild 导入或写文件。需要保存时由调用方写到工作区内的新报告。`Applies=null` 表示条件未解析，`Match=null` 表示无法比较；退出码 0 和空 `Findings` 都不代表通过验收。完整限制见验证参考。
+变量取自已定位的路径。仅 `Workspace` 必需，其余参数及输出说明见[验证参考](references/verification.md#使用只读检查器)。脚本不构建、启动 CAD 或写文件；退出码 0、空 `Findings` 和未知 `Match` 均不代表插件通过。无需为使用技能先运行检查器。
 
-## 修改与交付
+## 交付与技能边界
 
-遵循现有工程结构实现最小改动，核对 SDK 返回值和失败路径，再按任务执行相关验证。只有文档或检查任务时，不附带运行 CAD。报告：实际改动、查证来源、此次执行的验证、历史证据及剩余未知项。
+报告实际改动、已执行或复用的相关验证，以及影响本次结果的限制。优先复用项目现有入口；不要求每次新建工作区、完整快照、版本、回执体系或验收清单。正式发布、清理、提交、推送和技能副本同步按用户授权及项目适用约定执行，不因读取本技能扩大操作范围。
 
-开发迭代先明确本次改变、保留行为和验收依据，按影响范围验证；最终发布执行项目规定的完整检查。同一源码、资源、合同、夹具、测试程序、工具链及二进制对应的有效结果可以复用，输入变化后重新判断受影响范围，不为改写报告重复运行。具体分层和宿主完成证据见[验证与证据](references/verification.md)。
-
-提速先测阶段耗时和实际调用次数，优先消除重复读取、分析和生成。仅在同次同步只读操作内共享不可变结果；跨编辑、点选、对话框或提交需要重新校核来源及资源。工程化复用优先采用小型模板和明确所有权的封装，保持项目业务数值与类型差异；不要自动引入另一项目的全部发布门禁或历史目录。详见[开发效率与复用实践](references/development-efficiency.md)。
-
-涉及从结构数据或其他 JSON 契约生成 DWG 时，按需读取[原生出图模式](references/native-drawing-patterns.md)，其中的资源来源、跨图克隆、Hatch 和回读规则属于 ObjectARX 2020 的高风险路径。
-
-可配合 `cpp-coding-standards` 做一般 C++ 设计，配合 `cpp-testing` 做适当单元测试；它们不是必需依赖。工具链、ObjectARX 所有权和宿主约束优先用于裁剪通用建议。不要直接复制 C++20 示例、默认删除器或不适用 v141 的测试工具参数。
-
-本技能提供开发指导、资料索引、复用实践和只读检查。MFC/Jig/Reactors、自定义实体、Object Enabler、GUI 自动化与安装器需另行查证和验证；技能安装不代表插件已经迁移或通过运行验收。
+可按需配合 `cpp-coding-standards`、`cpp-testing`，无需因此加载整套通用流程。ObjectARX 2020 的工具链和对象管理约束用于裁剪示例。本技能提供方法、资料索引和只读工具；案例进度、业务准入和发布政策留在原项目。
